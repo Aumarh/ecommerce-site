@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { AppBar, Toolbar } from '@mui/material';
 import Link from 'next/link';
 
@@ -22,6 +23,10 @@ const brandStyles = css`
 
 const headerGrowStyles = css`
   flex-grow: 1;
+
+  a + a {
+    margin-left: 10px;
+  }
 `;
 
 export default function Header() {
@@ -35,7 +40,9 @@ export default function Header() {
           <div css={headerGrowStyles} />
           <div>
             <Link href="/products">Product</Link>
-            <Link href="/cart">Cart</Link>
+            <Link href="/cart">
+              <ShoppingCartIcon />
+            </Link>
           </div>
         </Toolbar>
       </AppBar>
