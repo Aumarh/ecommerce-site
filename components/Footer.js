@@ -6,7 +6,7 @@ const footerStyles = css`
   background: #004f9a;
   padding: 18px 0;
   text-align: center;
-  margin-top: 10px;
+  /* margin-top: 10px; */
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.43;

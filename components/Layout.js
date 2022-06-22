@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { Container } from '@mui/material';
 import Head from 'next/head';
+// import Cart from '../pages/cart';
 import Footer from './Footer';
 import Header from './Header';
 
@@ -8,7 +9,7 @@ const mainStyles = css`
   min-height: 82vh;
 `;
 
-export default function Layout({ children }) {
+export default function Layout({ children, props }) {
   return (
     <div>
       <Head>

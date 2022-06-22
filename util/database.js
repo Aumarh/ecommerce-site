@@ -10,7 +10,7 @@ const fabricDatabase = [
     image: '/images/fabric1.jpeg',
     price: 60,
     // rating: 4.1,
-    countInStock: 20,
+    quantity: 20,
     description: 'Egyptian cotton fabric',
   },
   {
@@ -21,7 +21,7 @@ const fabricDatabase = [
     image: '/images/fabric2.jpeg',
     price: 80,
     // rating: 3.5,
-    countInStock: 20,
+    quantity: 20,
     description: 'A hollandise Anakara fabric',
   },
   {
@@ -32,7 +32,7 @@ const fabricDatabase = [
     image: '/images/fabric3.jpeg',
     price: 67,
     // rating: 4.4,
-    countInStock: 20,
+    quantity: 20,
     description: 'A silk fabric',
   },
   {
@@ -43,7 +43,7 @@ const fabricDatabase = [
     image: '/images/fabric4.jpeg',
     price: 75,
     // rating: 3.2,
-    countInStock: 0,
+    quantity: 0,
     description: 'A swiss lace fabric',
   },
   {
@@ -54,7 +54,7 @@ const fabricDatabase = [
     image: '/images/fabric5.jpeg',
     price: 98,
     // rating: 4.8,
-    countInStock: 20,
+    quantity: 20,
     description: 'A tye and dye Adire fabric',
   },
   {
@@ -65,9 +65,14 @@ const fabricDatabase = [
     image: '/images/fabric6.jpeg',
     price: 60,
     // rating: 2.8,
-    countInStock: 20,
+    quantity: 20,
     description: 'A wool fabric',
   },
 ];
 
 export default fabricDatabase;
+
+export async function getFabricDatabase() {
+  const fabrics = await fabricDatabase;
+  return fabrics.map((fabric) => fabric);
+}

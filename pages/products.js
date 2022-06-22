@@ -12,6 +12,21 @@ import Head from 'next/head';
 import Link from 'next/link';
 import fabricDatabase from '../util/database';
 
+// export type Product = {
+//   id: number;
+//   slug: string;
+//   name: string;
+//   image?: string;
+//   category: string;
+//   price: number;
+//   countInStock: number;
+//   description: string;
+// };
+
+// type Props = {
+//   Products: Product[];
+// };
+
 export default function Home(props) {
   return (
     <div>

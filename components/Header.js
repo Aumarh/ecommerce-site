@@ -3,6 +3,8 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { AppBar, Toolbar } from '@mui/material';
 import Link from 'next/link';
 
+// import Cart from '../pages/cart';
+
 const navBarStyles = css`
   background: #0071dc;
 
@@ -24,15 +26,15 @@ const brandStyles = css`
 const headerGrowStyles = css`
   flex-grow: 1;
 
-  a + a {
+  a {
     margin-left: 10px;
   }
 `;
 
 export default function Header() {
   return (
-    <div>
-      <AppBar css={navBarStyles} position="static">
+    <div css={navBarStyles}>
+      <AppBar position="static">
         <Toolbar>
           <Link href="/" css={brandStyles}>
             Fabric
@@ -42,6 +44,7 @@ export default function Header() {
             <Link href="/products">Product</Link>
             <Link href="/cart">
               <ShoppingCartIcon />
+              {/* Cart */}
             </Link>
           </div>
         </Toolbar>

@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { ArrowBack } from '@mui/icons-material';
 import { Button, Grid, List, ListItem, Typography } from '@mui/material';
 import Cookies from 'js-cookie';
+// import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -33,39 +34,10 @@ const nameStyles = css`
 `;
 
 export default function Product(props) {
-  const [isInFabric, setIsInFabric] = useState(
-    'fabricCounter' in props.product,
-  );
+  const [isInCart, setIsInCart] = useState('fabricCounter' in props.product);
   const [fabricCounter, setFabricCounter] = useState(
     props.product.fabricCounter || 0,
   );
-
-  // useEffect(() => {
-  //   const currentFabric = Cookies.get('fabric')
-  //     ? JSON.parse(Cookies.get('diet'))
-  //     : [];
-  //   if (
-  //     currentFabric.find(
-  //       (productInFabric) => props.product.id === productInFabric.id,
-  //     )
-  //   ) {
-  //     setIsInFabric(true);
-  //   } else {
-  //     setIsInFabric(false);
-  //   }
-  // }, [props.product.id]);
-
-  // useEffect(() => {
-  //   const currentFabric = Cookies.get('fabric')
-  //     ? JSON.parse(Cookies.get('fabric'))
-  //     : [];
-  //   const currentProductInFabric = currentFabric.find(
-  //     (productInFabric) => props.product.id === productInFabric.id,
-  //   );
-  //   if (currentProductInFabric) {
-  //     setFabricCounter(currentProductInFabric.fabricCounter);
-  //   }
-  // }, [props.product.id]);
 
   if (!props.product) {
     return <div>Product Not Found</div>;
@@ -127,9 +99,7 @@ export default function Product(props) {
                 <ListItem>
                   <Typography>
                     Status:{' '}
-                    {props.product.countInStock > 0
-                      ? 'In stock'
-                      : 'Not in stock'}
+                    {props.product.quantity > 0 ? 'In stock' : 'Not in stock'}
                   </Typography>
                 </ListItem>
               </List>
@@ -139,11 +109,11 @@ export default function Product(props) {
                   variant="contained"
                   color="primary"
                   onClick={() => {
-                    const currentFabric = Cookies.get('fabric')
-                      ? setStringifiedCookie('fabric')
+                    const currentCart = Cookies.get('cart')
+                      ? getParsedCookie('cart')
                       : [];
-                    let newFabric;
-                    // let newFabric;
+                    let newCart;
+                    // let newCart;
                     // console.log(currentFabric);
                     // if (currentFabric.find((id) => props.product.id === id)) {
                     //   newFabric = currentFabric.filter(
@@ -153,32 +123,32 @@ export default function Product(props) {
                     // } else setIsInFabric(true);
 
                     if (
-                      currentFabric.find(
-                        (productInDiet) =>
-                          props.product.id === productInDiet.id,
+                      currentCart.find(
+                        (productInCart) =>
+                          props.product.id === productInCart.id,
                       )
                     ) {
-                      newFabric = currentFabric.filter(
-                        (productInDiet) =>
-                          productInDiet.id !== props.product.id,
+                      newCart = currentCart.filter(
+                        (productInCart) =>
+                          productInCart.id !== props.product.id,
                       );
-                      setIsInFabric(false);
+                      setIsInCart(false);
                       setFabricCounter(0);
                     } else {
-                      newFabric = [
-                        ...currentFabric,
+                      newCart = [
+                        ...currentCart,
                         { id: props.product.id, fabricCounter: 0 },
                       ];
-                      setIsInFabric(true);
+                      setIsInCart(true);
                     }
-
-                    setStringifiedCookie('fabric', newFabric);
+                    // sets cookie updates with updated value
+                    setStringifiedCookie('cart', newCart);
                   }}
                 >
-                  {/* {isInFabric ? 'Remove' : 'Add to cart'} */}
-                  Add to cart
+                  {isInCart ? 'Remove' : 'Add to cart'}
+                  {/* Add to cart */}
                 </Button>
-                {isInFabric ? (
+                {isInCart ? (
                   <>
                     {fabricCounter}
                     <Button
@@ -186,20 +156,20 @@ export default function Product(props) {
                       color="primary"
                       onClick={() => {
                         setFabricCounter(fabricCounter + 1);
-                        const currentFabric = Cookies.get('fabric')
-                          ? getParsedCookie('fabric')
+                        const currentCart = Cookies.get('cart')
+                          ? getParsedCookie('cart')
                           : [];
 
-                        const currentProductInFabric = currentFabric.find(
-                          (productInFabric) =>
-                            props.product.id === productInFabric,
+                        const currentProductInFabric = currentCart.find(
+                          (productInCart) =>
+                            props.product.id === productInCart.id,
                         );
 
                         currentProductInFabric.fabricCounter += 1;
 
-                        setStringifiedCookie('fabric', currentFabric);
+                        setStringifiedCookie('cart', currentCart);
 
-                        Cookies.set('fabric', JSON.stringify([currentFabric]));
+                        // Cookies.set('cart', JSON.stringify([currentFabric]));
                       }}
                     >
                       +
@@ -218,24 +188,27 @@ export default function Product(props) {
 }
 
 export function getServerSideProps(context) {
-  const currentFabric = JSON.parse(context.req.cookies.fabric || '[]');
-  // console.log(currentFabric);
+  const currentCart = JSON.parse(context.req.cookies.cart || '[]');
+  // console.log(currentCart);
 
   const singleProduct = fabricDatabase.find((product) => {
     return product.id === context.query.productId;
   });
 
-  const currentProductInFabric = currentFabric.find(
-    (productInFabric) => singleProduct.id === productInFabric,
+  if (!singleProduct) {
+    return {
+      props: {
+        product: null,
+      },
+    };
+  }
+
+  const currentProductInCart = currentCart.find(
+    (productInCart) => singleProduct.id === productInCart.id,
   );
 
-  const superProduct = { ...singleProduct, ...currentProductInFabric };
-  // console.log(singleProduct);
-  // console.log(superProduct);
+  const superProduct = { ...singleProduct, ...currentProductInCart };
 
-  // if (!singleProduct) {
-  //   context.res.statusCode = 404;
-  // }
   return {
     props: {
       product: superProduct,

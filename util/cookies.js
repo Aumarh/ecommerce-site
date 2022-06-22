@@ -1,5 +1,9 @@
 import Cookies from 'js-cookie';
 
+// import { currentFabric } from '../pages/product/[productId]';
+
+// import { ProductInFabric } from '../pages/product/[productId]';
+
 export function getParsedCookie(key) {
   const cookieValue = Cookies.get(key);
 
@@ -16,4 +20,12 @@ export function getParsedCookie(key) {
 
 export function setStringifiedCookie(key, value) {
   Cookies.set(key, JSON.stringify(value));
+}
+
+export function stringifiedCookieValue(value) {
+  return JSON.stringify(value);
+}
+
+export function deleteCookie(key) {
+  Cookies.remove(key);
 }

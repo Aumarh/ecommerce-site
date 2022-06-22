@@ -1,6 +1,15 @@
+import { css } from '@emotion/react';
+import { Button } from '@material-ui/core';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+
+const paragraphStyles = css`
+  font-family: cursive;
+  font-weight: 600;
+`;
 
 export default function ThankYouPage() {
+  const router = useRouter();
   return (
     <>
       <Head>
@@ -12,8 +21,22 @@ export default function ThankYouPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <h1>Thank you for ordering with us</h1>
-        <p>You will receive an email with your order and delivery details.</p>
+        <h1 css={paragraphStyles}>Thank you for shopping with us</h1>
+        <p>
+          An email with your order and delivery details will be sent to your
+          inbox.
+        </p>
+      </div>
+      <div>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={() => {
+            router.push('/products').catch(() => {});
+          }}
+        >
+          Continue shopping...
+        </Button>
       </div>
     </>
   );
