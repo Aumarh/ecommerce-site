@@ -23,15 +23,15 @@ this is a desktop version btw - please look at it on a screen width bigger than 
 
 ### landing page
 
-<img src="./public/images/screenshots/landingpage.jpeg" width="70%">
+<img src="./public/images/landingpage.jpeg" width="70%">
 
 ### product page
 
-<img src="./public/images/screenshots/fabrics.jpeg" width="70%">
+<img src="./public/images/fabrics.jpeg" width="70%">
 
-### Product page
+### dynamic page
 
-<img src="./public/images/screenshots/productpage.jpeg" width="70%">
+<img src="./public/images/productpage.jpeg" width="70%">
 
 ## Setup guide
 
