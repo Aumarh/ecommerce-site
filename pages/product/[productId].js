@@ -19,6 +19,10 @@ const sectionStyles = css`
   }
 `;
 
+const buyButtonStyles = css`
+  text-decoration: none;
+`;
+
 const nameStyles = css`
   h1 {
     font-size: 1.6rem;
@@ -178,7 +182,11 @@ export default function Product(props) {
                   ) : (
                     ''
                   )}
-                  <Button variant="contained" color="primary">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    css={buyButtonStyles}
+                  >
                     <Link href="/cart">Buy</Link>
                   </Button>
                 </ListItem>
