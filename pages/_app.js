@@ -29,6 +29,7 @@ function MyApp({ Component, pageProps }) {
       <Global
         styles={css`
           body {
+            padding: 0;
             margin: 0;
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;

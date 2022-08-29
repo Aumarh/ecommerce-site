@@ -8,7 +8,7 @@ const heroStyle = css`
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
-  height: 100vh;
+  height: 90vh;
   width: 100%;
   position: relative;
 `;
@@ -18,6 +18,7 @@ const heroHeadersContainer = css`
   bottom: 30%;
   left: 10%;
   width: 30%;
+
   @media (max-width: 1280px) {
     width: 40%;
   }
@@ -36,6 +37,7 @@ const buttonContainer = css`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  margin-top: 20px;
 `;
 
 const heroSubheading = css`
@@ -48,12 +50,14 @@ const heroSubheading = css`
   padding-left: 24px;
   padding-right: 24px;
   padding-bottom: 12px;
+  padding-top: 12px;
   font-weight: 600;
 `;
 
 const paragraphStyles = css`
   font-family: cursive;
   font-weight: 600;
+  font-size: 1.3rem;
 `;
 
 const heroHeading = css`
@@ -88,16 +92,16 @@ export default function Hero() {
       <div css={heroHeadersContainer}>
         <div css={heroSubheading}>
           <Typography>
-            Your one stop shop for all your fabric options. <br />
+            Your one stop shop for all your fabric options. <br /> <br />
             We have different fabrics from around the world, 100% eco-friendly
             and ethically sourced.
           </Typography>
         </div>
         <div css={heroHeading}>
-          <Typography>
-            <p css={paragraphStyles}>
+          <Typography variant="h1">
+            <div css={paragraphStyles}>
               If we don't have it, we can source for it.
-            </p>
+            </div>
           </Typography>
         </div>
         <div css={buttonContainer}>

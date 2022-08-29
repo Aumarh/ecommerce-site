@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import {
   Button,
   Card,
@@ -10,7 +11,7 @@ import {
 } from '@mui/material';
 import Head from 'next/head';
 import Link from 'next/link';
-import fabricDatabase from '../util/database';
+import { getAllFabrics } from '../util/database';
 
 // export type Product = {
 //   id: number;
@@ -26,6 +27,10 @@ import fabricDatabase from '../util/database';
 // type Props = {
 //   Products: Product[];
 // };
+
+const productContainerStyles = css`
+  margin-bottom: 40px;
+`;
 
 export default function Home(props) {
   return (
@@ -45,12 +50,12 @@ export default function Home(props) {
             // console.log(fabricDatabase);
             return (
               <Grid item md={4} key={`fabrics-${product.id}`}>
-                <Card>
+                <Card css={productContainerStyles}>
                   <Link href={`/product/${product.id}`}>
                     <CardActionArea>
                       <CardMedia
                         component="img"
-                        image={product.image}
+                        image={`/images/${product.id}.jpeg`}
                         title={product.category}
                       />
                       <CardContent>
@@ -74,11 +79,13 @@ export default function Home(props) {
   );
 }
 
-export function getServerSideProps() {
+export async function getServerSideProps() {
   // console.log(fabricDatabase);
+  const products = await getAllFabrics();
+
   return {
     props: {
-      products: fabricDatabase,
+      products: products,
     },
   };
 }

@@ -1,46 +1,89 @@
+import { css } from '@emotion/react';
+import { ArrowBack } from '@mui/icons-material';
+import { Button } from '@mui/material';
+import Cookies from 'js-cookie';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { setStringifiedCookie } from '../util/cookies';
-import { getFabricDatabase } from '../util/database';
+import Image from 'next/image';
+// import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { returnToStyles } from '../pages/cart';
+import { deleteCookie, getParsedCookie } from '../util/cookies';
+import { getAllFabrics } from '../util/database';
+
+const formStyles = css`
+  li {
+    margin: auto;
+  }
+`;
 
 export default function Checkout(props) {
-  console.log(props.foundProducts);
-  const totalPrice = props.foundProducts.map((product) => {
-    const fabricPrice = Number(product.price);
-    const fabricCounter = Number(product.quantity);
-    const fabricPriceTotal = fabricPrice * fabricCounter;
-    return fabricPriceTotal;
-  });
+  const [productCarts, setProductCarts] = useState([]);
+  const [sum, setSum] = useState(0);
 
-  console.log(totalPrice);
+  // get the cookies and store them inside currentCart
+  useEffect(() => {
+    const currentCart = Cookies.get('cart') ? getParsedCookie('cart') : [];
+    setProductCarts(currentCart);
+  }, []);
 
-  function add(accumulator, a) {
-    return accumulator + a;
+  // run over cookies in cart and calculate the quantity
+  let totalQuantity = 0;
+  for (let i = 0; i < productCarts.length; i++) {
+    totalQuantity += productCarts[i].quantity;
   }
 
-  const sum = totalPrice.reduce(add, 0);
+  // calculate sum
+  useEffect(() => {
+    function calculateTotalSum() {
+      let total = 0;
+      productCarts.map((cartProduct) => {
+        return (total +=
+          props.product.find((product) => {
+            return cartProduct.id === product.id;
+          }).price * cartProduct.quantity);
+      });
+      setSum(total);
+    }
+    calculateTotalSum();
+  }, [productCarts, props.product]);
 
-  const totalQuantity = props.foundFabrics.map((productQuantity) => {
-    const productCounterTwo = Number(productQuantity.quantity);
-    return productCounterTwo;
+  // resetting the form on submit
+  const [infos, setInfos] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    address: '',
+    city: '',
+    postalCode: '',
+    country: '',
+    creditCard: '',
+    expirationDate: '',
+    securityCode: '',
   });
-  console.log(totalQuantity);
 
-  function addQ(acc, b) {
-    return acc + b;
-  }
-  const summedQuantity = totalQuantity.reduce(addQ, 0);
-  console.log(summedQuantity);
+  const set = (name) => {
+    return ({ target: { info } }) => {
+      setInfos((oldInfos) => ({ ...oldInfos, [name]: info }));
+    };
+  };
+
+  // form submit links to thankyou page and cleans up the cookies in cart
+  const onSubmit = (event) => {
+    event.preventDefault();
+    window.location.href = '/thankyou';
+    deleteCookie('cart');
+  };
 
   // use router function to reroute to thank you page on click of the submit button
-  const router = useRouter();
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setStringifiedCookie('cart', []);
-    props.setItemsInCookieCart([]);
+  // const router = useRouter();
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+  //   setStringifiedCookie('cart', []);
+  //   props.setItemsInCookieCart([]);
 
-    router.push('/thanks').catch(() => {});
-  };
+  //   router.push('/thanks').catch(() => {});
+  // };
 
   return (
     <div>
@@ -52,135 +95,225 @@ export default function Checkout(props) {
       <section>
         <main>
           <div>
-            <h3>Checkout</h3>
+            <div>
+              <h3>Checkout</h3>
+            </div>
+            <div>
+              {productCarts.map((productCart) => {
+                return (
+                  <div key={`cart-${productCart.id}`}>
+                    <div>
+                      <Image
+                        data-test-id="product-image"
+                        src={`/images/${productCart.id}.jpeg`}
+                        width="70"
+                        height="70"
+                      />
+                      <br />
+                      {productCart.quantity}{' '}
+                      {
+                        props.product.find((product) => {
+                          return productCart.id === product.id;
+                        }).name
+                      }
+                      {productCart.quantity === 1 ? '' : 's'}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div>
+              <div>
+                your cart contains {totalQuantity}{' '}
+                {totalQuantity === 1 ? 'fabric' : 'fabrics'}
+              </div>
+              <div>
+                total price: <span>{sum} €</span>
+              </div>{' '}
+            </div>
+          </div>
+          <div>
             <h4>Please Enter Your Information</h4>
           </div>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <ul>
-                <li>
-                  <input
-                    placeholder="first name"
-                    data-test-id="checkout-first-name"
-                    required
-                  />
-                </li>
-                <li>
-                  <input
-                    placeholder="last name"
-                    data-test-id="checkout-last-name"
-                    required
-                  />
-                </li>
-                <li>
-                  <input
-                    placeholder="email"
-                    data-test-id="checkout-email"
-                    required
-                  />
-                </li>
-                <li>
-                  <input
-                    placeholder="address"
-                    data-test-id="checkout-address"
-                    required
-                  />
-                </li>
-                <li>
-                  <input
-                    placeholder="city"
-                    data-test-id="checkout-city"
-                    required
-                  />
-                </li>
-                <li>
-                  <input
-                    placeholder="email"
-                    data-test-id="checkout-email"
-                    required
-                  />
-                </li>
-                <li>
-                  <input
-                    placeholder="postal code"
-                    data-test-id="checkout-postal-code"
-                    required
-                  />
-                </li>
-                <li>
-                  <input
-                    placeholder="country"
-                    data-test-id="checkout-country"
-                    required
-                  />
-                </li>
-                <li>
-                  <input
-                    placeholder="credit card"
-                    data-test-id="checkout-credit-card"
-                    required
-                  />
-                </li>
-                <li>
-                  <input
-                    placeholder="expiration-date"
-                    data-test-id="checkout-expiration-date"
-                    required
-                  />
-                </li>
-                <li>
-                  <input
-                    placeholder="security code"
-                    data-test-id="checkout-security-code"
-                    required
-                  />
-                </li>
-              </ul>
-              {/* <div className="submitButtonStyles">
+          <br />
+          <div>
+            <form onSubmit={onSubmit}>
+              <div css={formStyles}>
+                <ul>
+                  <li>
+                    <label>
+                      <span>first name:</span>
+                      <input
+                        data-test-id="checkout-first-name"
+                        value={infos.firstName}
+                        onChange={set('firstName')}
+                        required
+                      />
+                    </label>{' '}
+                  </li>
+                  <li>
+                    <label>
+                      <span> last name:</span>
+                      <input
+                        data-test-id="checkout-last-name"
+                        value={infos.lastName}
+                        onChange={set('lastName')}
+                        required
+                      />
+                    </label>
+                  </li>
+                  <li>
+                    <label>
+                      <span>email:</span>
+                      <input
+                        type="email"
+                        data-test-id="checkout-email"
+                        value={infos.email}
+                        onChange={set('email')}
+                        required
+                      />
+                    </label>
+                  </li>
+                  <li>
+                    {' '}
+                    <label>
+                      <span>address:</span>
+                      <input
+                        data-test-id="checkout-address"
+                        value={infos.address}
+                        onChange={set('address')}
+                        required
+                      />
+                    </label>{' '}
+                  </li>
+                  <li>
+                    {' '}
+                    <label>
+                      <span> city:</span>
+                      <input
+                        data-test-id="checkout-city"
+                        value={infos.city}
+                        onChange={set('city')}
+                        required
+                      />
+                    </label>
+                  </li>
+                  <li>
+                    {' '}
+                    <label>
+                      <span>postal code:</span>
+                      <input
+                        data-test-id="checkout-postal-code"
+                        value={infos.postalCode}
+                        onChange={set('postalCode')}
+                        required
+                      />
+                    </label>
+                  </li>
+                  <li>
+                    <label>
+                      country:
+                      <input
+                        data-test-id="checkout-country"
+                        value={infos.country}
+                        onChange={set('country')}
+                        required
+                      />
+                    </label>
+                  </li>
+                  <li>
+                    {' '}
+                    <label>
+                      {' '}
+                      <span>credit-card: </span>
+                      <input
+                        data-test-id="checkout-credit-card"
+                        type="number"
+                        value={infos.creditCard}
+                        onChange={set('creditCard')}
+                        maxLength={12}
+                        required
+                      />
+                    </label>{' '}
+                  </li>
+                  <li>
+                    <label>
+                      <span>expiration date:</span>
+                      <input
+                        data-test-id="checkout-expiration-date"
+                        type="number"
+                        value={infos.expirationDate}
+                        onChange={set('expirationDate')}
+                        maxLength={12}
+                        required
+                      />
+                    </label>
+                  </li>
+                  <li>
+                    {' '}
+                    <label>
+                      <span> security code:</span>
+                      <input
+                        data-test-id="checkout-security-code"
+                        value={infos.securityCode}
+                        onChange={set('securityCode')}
+                        type="password"
+                        required
+                      />
+                    </label>
+                  </li>
+                  <br />{' '}
+                </ul>
+                {/* <div className="submitButtonStyles">
               <button data-test-id="checkout-confirm-order">Submit</button>
             </div> */}
-            </div>
+                <div>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    // css={buttonBuyStyle}
+                    data-test-id="checkout-confirm-order"
+                    onClick={() => {
+                      deleteCookie('cart');
 
-            <div className="checkoutInfo">
-              <button data-test-id="checkout-confirm-order">Submit</button>
-              <h4 className="cartStyles">
-                Total fabrics in cart are: {summedQuantity}
-              </h4>
-              <h3 className="sumStyles">Total sum is: {sum}</h3>
-            </div>
-          </form>
+                      // props.setProductInCart([]);
+                    }}
+                  >
+                    confirm
+                  </Button>
+                </div>
+              </div>
+
+              {/* <div className="checkoutInfo">
+                <button data-test-id="checkout-confirm-order">Submit</button>
+                <h4 className="cartStyles">
+                  Total fabrics in cart are: {totalQuantity}
+                </h4>
+                <h3 className="sumStyles">Total sum is: {sum}</h3>
+              </div> */}
+            </form>
+          </div>
         </main>
+        <div css={returnToStyles}>
+          <Link href="/products">
+            <a>
+              <ArrowBack className="arrow" /> to fabric shop
+            </a>
+          </Link>
+        </div>{' '}
       </section>
     </div>
   );
 }
 
 export async function getServerSideProps(context) {
-  const currentCart = context.req.cookies.cart
-    ? JSON.parse(context.req.cookies.cart)
-    : [];
+  const currentCart = JSON.parse(context.req.cookies.cart || '[]');
   console.log(currentCart);
 
-  // 1. get the object from the cookies in the database
-  const allFabrics = await getFabricDatabase();
-
-  // 2. create array to store found synths in cookies
-  const foundFabrics = [];
-
-  // 3. query fabrics database to find the id of current  cart products
-  for (const fabric of currentCart) {
-    const fabricDatabase = allFabrics.find((fabricProduct) => {
-      return fabricProduct.id === fabric.id;
-    });
-    if (!fabricDatabase) {
-      context.res.statusCode = 404;
-    }
-    const superFabric = { ...fabricDatabase, ...fabric };
-
-    foundFabrics.push(superFabric);
-  }
+  // get the object from the cookies in the database
+  const product = await getAllFabrics();
 
   return {
-    props: { foundFabrics: foundFabrics },
+    props: { currentCart: currentCart, product: product },
   };
 }
